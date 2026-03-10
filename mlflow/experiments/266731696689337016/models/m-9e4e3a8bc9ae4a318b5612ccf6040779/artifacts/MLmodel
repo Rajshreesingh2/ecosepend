@@ -1,0 +1,23 @@
+artifact_path: file:C:/Users/Rajshree Singh/Desktop/ecospend-ai/mlflow/experiments/266731696689337016/models/m-9e4e3a8bc9ae4a318b5612ccf6040779/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.5
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+    skops_trusted_types: null
+mlflow_version: 3.10.1
+model_id: m-9e4e3a8bc9ae4a318b5612ccf6040779
+model_size_bytes: 308658
+model_uuid: m-9e4e3a8bc9ae4a318b5612ccf6040779
+prompts: null
+run_id: c849e193da2f4157a0ecfe0c64878bdb
+utc_time_created: '2026-03-10 18:36:07.097058'

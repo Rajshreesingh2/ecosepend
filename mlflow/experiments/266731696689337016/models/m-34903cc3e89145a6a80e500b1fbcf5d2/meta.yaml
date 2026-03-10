@@ -1,0 +1,10 @@
+artifact_location: file:C:/Users/Rajshree Singh/Desktop/ecospend-ai/mlflow/experiments/266731696689337016/models/m-34903cc3e89145a6a80e500b1fbcf5d2/artifacts
+creation_timestamp: 1773167750750
+experiment_id: '266731696689337016'
+last_updated_timestamp: 1773167766468
+model_id: m-34903cc3e89145a6a80e500b1fbcf5d2
+model_type: null
+name: lgbm_model
+source_run_id: 2127ab0309f4446993d9f6e77cb7c797
+status: 2
+status_message: null
