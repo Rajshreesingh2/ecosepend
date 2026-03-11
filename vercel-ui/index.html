@@ -929,13 +929,13 @@
       <div class="stats-grid">
         <div class="stat-card green">
           <div class="stat-icon green">🌿</div>
-          <div class="stat-value">9.55</div>
+          <div class="stat-value" id="co2-value">9.55</div>
           <div class="stat-label">kg CO₂ this month</div>
           <div class="stat-badge good">↓ 18% from last month</div>
         </div>
         <div class="stat-card blue">
           <div class="stat-icon blue">₹</div>
-          <div class="stat-value">4,663</div>
+          <div class="stat-value" id="spend-value">₹4,663</div>
           <div class="stat-label">Total spend (Mar)</div>
           <div class="stat-badge warn">↑ 8% from Feb</div>
         </div>
@@ -943,7 +943,7 @@
           <div class="stat-icon orange">🎯</div>
           <div class="stat-value">64%</div>
           <div class="stat-label">Monthly goal (15 kg)</div>
-          <div class="stat-badge good">✓ On track</div>
+          <div class="stat-badge good"><span id="goal-status">✓ On track</span></div>
         </div>
         <div class="stat-card purple">
           <div class="stat-icon purple">⭐</div>
@@ -1586,6 +1586,89 @@
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
   }
+
+
+// ===== REAL API CONNECTION =====
+  const API = 'http://127.0.0.1:8000';
+
+  // Load real dashboard data on startup
+  async function loadDashboard() {
+    try {
+      const res = await fetch(`${API}/summary/user_1`);
+      const data = await res.json();
+      
+      // Update CO2 stat
+      document.querySelector('#co2-value').textContent = data.predicted_co2_kg;
+      document.querySelector('#spend-value').textContent = '₹' + data.total_spend.toLocaleString();
+      document.querySelector('#eco-score').textContent = data.eco_score;
+      
+      // Goal progress
+      const goalPct = Math.round((data.predicted_co2_kg / 15) * 100);
+      document.querySelector('#goal-value').textContent = goalPct + '%';
+      
+      // Status
+      const status = data.within_goal ? '<span id="goal-status">✓ On track</span>' : '⚠ Exceeds goal';
+      document.querySelector('#goal-status').textContent = status;
+
+    } catch(e) {
+      console.log('API not connected:', e);
+    }
+  }
+
+  // Real NLP classification
+  async function classifyTransaction(description) {
+    try {
+      const res = await fetch(`${API}/classify`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({description})
+      });
+      return await res.json();
+    } catch(e) {
+      console.log('Classify error:', e);
+    }
+  }
+
+  // Real CO2 prediction
+  async function predictCO2(spend) {
+    try {
+      const res = await fetch(`${API}/predict-co2`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(spend)
+      });
+      return await res.json();
+    } catch(e) {
+      console.log('Predict error:', e);
+    }
+  }
+
+  // Real recommendations
+  async function loadRecommendations(userId = 'user_1') {
+    try {
+      const res = await fetch(`${API}/recommend/${userId}`);
+      const data = await res.json();
+      
+      const container = document.querySelector('#recommendations-list');
+      if (container && data.recommendations) {
+        container.innerHTML = data.recommendations.map(r => `
+          <div class="action-card">
+            <div class="action-title">${r.action.replace(/_/g,' ')}</div>
+            <div class="action-savings">🌿 Save ${r.co2_saving_kg_per_month} kg/mo</div>
+          </div>
+        `).join('');
+      }
+    } catch(e) {
+      console.log('Recommendations error:', e);
+    }
+  }
+
+  // Run on page load
+  window.addEventListener('load', () => {
+    loadDashboard();
+    loadRecommendations();
+  });
+
 </script>
 </body>
 </html>
